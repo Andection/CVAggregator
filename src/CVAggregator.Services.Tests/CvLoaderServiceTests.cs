@@ -19,9 +19,9 @@ namespace CVAggregator.Services.Tests
         }
 
         [Test]
-        public async void should_load_page_of_resume()
+        public  void should_load_page_of_resume()
         {
-            var page = await _service.LoadCurriculumVitae(0, PageSize, CityId);
+            var page =  _service.LoadCurriculumVitae(0, PageSize, CityId);
 
             page.Should().NotBeNull();
             page.Data.Should().HaveCount(PageSize);
@@ -30,7 +30,7 @@ namespace CVAggregator.Services.Tests
         [Test]
         public async void should_parse_resume()
         {
-            var page = (await _service.LoadCurriculumVitae(0, PageSize, CityId)).Data;
+            var page = _service.LoadCurriculumVitae(0, PageSize, CityId).Data;
 
             page.Any(p => string.IsNullOrEmpty(p.ExternalId)).Should().BeFalse();
             page.Any(p => !string.IsNullOrWhiteSpace(p.Name)).Should().BeTrue();

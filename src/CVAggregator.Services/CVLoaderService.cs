@@ -20,11 +20,11 @@ namespace CVAggregator.Services
             _rootUri = rootUri;
         }
 
-        public async Task<Page<CurriculumVitae>> LoadCurriculumVitae(int pageIndex, int pageSize, int cityId)
+        public Page<CurriculumVitae> LoadCurriculumVitae(int pageIndex, int pageSize, int cityId)
         {
             using (var httpClient = new HttpClient())
             {
-                var rawJson = await httpClient.GetStringAsync(string.Format("{0}?city_id={1}&limit={2}&offset={3}", _rootUri, cityId, pageSize, pageSize*pageIndex));
+                var rawJson = httpClient.GetStringAsync(string.Format("{0}?city_id={1}&limit={2}&offset={3}", _rootUri, cityId, pageSize, pageSize*pageIndex)).Result;
                 _log.Trace(m => m("loaded json {0}", rawJson));
            
                 var data = JsonConvert.DeserializeObject<dynamic>(rawJson);
