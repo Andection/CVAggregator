@@ -1,8 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AggregatorService.Domain;
-using HtmlAgilityPack;
+using Newtonsoft.Json;
 
 namespace CVAggregator.Services
 {
@@ -15,28 +16,16 @@ namespace CVAggregator.Services
             _rootUri = rootUri;
         }
 
-        public async Task<CurriculumVitae[]> LoadCurriculumVitae(int pageIndex, int pageSize)
+        public async Task<CurriculumVitae[]> LoadCurriculumVitae(int pageIndex, int pageSize, int cityId)
         {
             using (var httpClient = new HttpClient())
             {
-                var rawHtml = await httpClient.GetStringAsync(string.Format("{0}?limit={1}&offset={2}", _rootUri, pageSize, pageSize*pageIndex));
+                var rawJson = await httpClient.GetStringAsync(string.Format("{0}?city_id={1}&limit={2}&offset={3}", _rootUri, cityId, pageSize, pageSize*pageIndex));
 
-                var htmlDocument = new HtmlDocument();
-                htmlDocument.LoadHtml(rawHtml);
+                var data = JsonConvert.DeserializeObject<dynamic>(rawJson);
 
-                var allContent = htmlDocument.GetElementbyId("ra-content");
-                return allContent.SelectSingleNode("//div[@class='ra-elements-container']")
-                                 .SelectSingleNode("//ul[@class='ra-elements-list-hidden']")
-                                 .Descendants("li")
-                                 .Select(Map)
-                                 .ToArray();
-
+                return ((IEnumerable<dynamic>) data.resumes).Select(rawResume => new CurriculumVitae()).ToArray();
             }
-        }
-
-        private static CurriculumVitae Map(HtmlNode item)
-        {
-            return new CurriculumVitae();
         }
     }
 }

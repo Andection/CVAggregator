@@ -11,14 +11,15 @@ namespace CVAggregator.Services.Tests
         [SetUp]
         public void SetUp()
         {
-            _service = new CvLoaderService("http://rabota.e1.ru/resume");
+            //только для екатеринбурга
+            _service = new CvLoaderService("http://rabota.e1.ru/api/v1/resumes/");
         }
 
         [Test]
         public async void should_load_page_of_resume()
         {
             const int pageSize = 100;
-            var page = await _service.LoadCurriculumVitae(0, pageSize);
+            var page = await _service.LoadCurriculumVitae(0, pageSize,994);
 
             page.Should().NotBeNull();
             page.Should().HaveCount(pageSize);
