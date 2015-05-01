@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using AggregatorService.Domain;
 using FluentAssertions;
@@ -7,14 +8,14 @@ using NUnit.Framework;
 namespace CVAggregator.Services.Tests
 {
     [TestFixture]
-    public class CvPersistenceServiceTests : AbstractPersistenceTests
+    public class CurriculumVitaeServiceTests : AbstractPersistenceTests
     {
-        private CvPersistenceService _service;
+        private CurriculumVitaeService _service;
 
         protected override void BeforeEachTest()
         {
             base.BeforeEachTest();
-            _service = new CvPersistenceService(Database);
+            _service = new CurriculumVitaeService(Database);
         }
 
         [Test]
@@ -24,7 +25,7 @@ namespace CVAggregator.Services.Tests
             {
                 ExternalId = "123",
                 ExperienceLength = "ExperienceLength",
-                Birthday = "Birthday",
+                Birthday = DateTime.UtcNow.Date,
                 Skills = "skillss",
                 WorkingType = "working type",
                 CvHeader = "programmer",
@@ -33,7 +34,8 @@ namespace CVAggregator.Services.Tests
                 Name = "name surname",
                 PersonalQualities = "qualities",
                 PhotoUri = "uri",
-                WantedSalary = 100000
+                WantedSalary = 100000,
+                UpdateDate = DateTime.Now
             };
 
             _service.Insert(new[]

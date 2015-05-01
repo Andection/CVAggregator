@@ -5,9 +5,9 @@ using NUnit.Framework;
 namespace CVAggregator.Services.Tests
 {
     [TestFixture]
-    public class CvLoaderServiceTests
+    public class CurriculumVitaeRemoteServiceTests
     {
-        private CvLoaderService _service;
+        private CurriculumVitaeRemoteService _service;
         private const int PageSize=100;
         //Екатеринбурга
         private const int CityId = 994;
@@ -15,7 +15,7 @@ namespace CVAggregator.Services.Tests
         [SetUp]
         public void SetUp()
         {
-            _service = new CvLoaderService("http://rabota.e1.ru/api/v1/resumes/");
+            _service = new CurriculumVitaeRemoteService("http://rabota.e1.ru/api/v1/resumes/");
         }
 
         [Test]
@@ -44,7 +44,7 @@ namespace CVAggregator.Services.Tests
 
             page.Any(p => !string.IsNullOrWhiteSpace(p.Skills)).Should().BeTrue();
             page.Any(p => !string.IsNullOrWhiteSpace(p.WorkingType)).Should().BeTrue();
-            page.Any(p => !string.IsNullOrWhiteSpace(p.Birthday)).Should().BeTrue();
+            page.Any(p => p.Birthday.HasValue).Should().BeTrue();
             page.Any(p => p.WantedSalary.HasValue).Should().BeTrue();
         }
     }

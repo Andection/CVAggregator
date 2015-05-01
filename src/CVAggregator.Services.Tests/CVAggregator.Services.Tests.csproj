@@ -75,8 +75,8 @@
   <ItemGroup>
     <Compile Include="AbstractPersistenceTests.cs" />
     <Compile Include="AgregatorServiceTests.cs" />
-    <Compile Include="CvLoaderServiceTests.cs" />
-    <Compile Include="CvPersistenceServiceTests.cs" />
+    <Compile Include="CurriculumVitaeRemoteServiceTests.cs" />
+    <Compile Include="CurriculumVitaeServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

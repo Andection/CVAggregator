@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 using AggregatorService.Domain;
 using Common.Logging;
 using Newtonsoft.Json;
 
 namespace CVAggregator.Services
 {
-    public class CvLoaderService
+    public class CurriculumVitaeRemoteService
     {
         private readonly string _rootUri;
 
-        private static ILog _log = LogManager.GetLogger<CvLoaderService>();
+        private static readonly ILog Log = LogManager.GetLogger<CurriculumVitaeRemoteService>();
 
-        public CvLoaderService(string rootUri)
+        public CurriculumVitaeRemoteService(string rootUri)
         {
             _rootUri = rootUri;
         }
@@ -25,7 +25,7 @@ namespace CVAggregator.Services
             using (var httpClient = new HttpClient())
             {
                 var rawJson = httpClient.GetStringAsync(string.Format("{0}?city_id={1}&limit={2}&offset={3}", _rootUri, cityId, pageSize, pageSize*pageIndex)).Result;
-                _log.Trace(m => m("loaded json {0}", rawJson));
+                Log.Trace(m => m("loaded json {0}", rawJson));
            
                 var data = JsonConvert.DeserializeObject<dynamic>(rawJson);
 
@@ -51,7 +51,8 @@ namespace CVAggregator.Services
                 PhotoUri = rawResume.photo != null ? rawResume.photo.url : string.Empty,
                 WorkingType = rawResume.working_type != null ? rawResume.working_type.title : string.Empty,
                 WantedSalary = rawResume.wanted_salary_rub,
-                ExperienceLength = rawResume.experience_length != null ? rawResume.experience_length.title : string.Empty
+                ExperienceLength = rawResume.experience_length != null ? rawResume.experience_length.title : string.Empty,
+                UpdateDate = (DateTime?)rawResume.mod_date
             };
         }
     }

@@ -4,11 +4,11 @@ using MongoDB.Driver;
 
 namespace CVAggregator.Services
 {
-    public class CvPersistenceService
+    public class CurriculumVitaeService
     {
         private readonly MongoDatabase _database;
 
-        public CvPersistenceService(MongoDatabase database)
+        public CurriculumVitaeService(MongoDatabase database)
         {
             _database = database;
         }

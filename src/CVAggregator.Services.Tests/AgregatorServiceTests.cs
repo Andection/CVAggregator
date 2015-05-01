@@ -13,7 +13,7 @@ namespace CVAggregator.Services.Tests
         protected override void BeforeEachTest()
         {
             base.BeforeEachTest();
-            _service = new AggregatorService(new CvPersistenceService(Database), new CvLoaderService("http://rabota.e1.ru/api/v1/resumes/"));
+            _service = new AggregatorService(new CurriculumVitaeService(Database), new CurriculumVitaeRemoteService("http://rabota.e1.ru/api/v1/resumes/"));
         }
 
         [Test]

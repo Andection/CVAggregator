@@ -8,15 +8,15 @@ namespace CVAggregator.Services
 {
     public class AggregatorService : IAggregationService
     {
-        private readonly CvPersistenceService _persistenceService;
-        private readonly CvLoaderService _loaderService;
+        private readonly CurriculumVitaeService _persistenceService;
+        private readonly CurriculumVitaeRemoteService _loaderService;
         private const int PageSize = 100;
         private ILog _log = LogManager.GetLogger<AggregatorService>();
         //Екатеринбурга
         private const int CityId = 994;
         private const string Message = "Идет загрузка данных...";
 
-        public AggregatorService(CvPersistenceService persistenceService, CvLoaderService loaderService)
+        public AggregatorService(CurriculumVitaeService persistenceService, CurriculumVitaeRemoteService loaderService)
         {
             _persistenceService = persistenceService;
             _loaderService = loaderService;
@@ -41,12 +41,17 @@ namespace CVAggregator.Services
                     try
                     {
                         var currentPage = _loaderService.LoadCurriculumVitae(currentPageIndex, PageSize, CityId);
-                        if(currentPage.Size==0)
-                            return;
+                        if (currentPage.Size == 0)
+                        {
+                            loadedResumes = Interlocked.Add(ref loadedResumes, PageSize);
+                        }
+                        else
+                        {
+                            _persistenceService.Insert(currentPage.Data);
 
-                        _persistenceService.Insert(currentPage.Data);
+                            loadedResumes = Interlocked.Add(ref loadedResumes, page.Size);
+                        }
 
-                        loadedResumes = Interlocked.Add(ref loadedResumes, page.Size);
                         progressIndication.Progress(loadedResumes, totalResumes, Message);
                     }
                     catch (Exception ex)
