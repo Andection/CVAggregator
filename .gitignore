@@ -158,3 +158,11 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
+*.nupkg
+*.dll
+*.xml
+*.XML
+*.png
+*.pri
+*._
+*.txt
