@@ -24,8 +24,27 @@ namespace CVAggregator.Services
 
                 var data = JsonConvert.DeserializeObject<dynamic>(rawJson);
 
-                return ((IEnumerable<dynamic>) data.resumes).Select(rawResume => new CurriculumVitae()).ToArray();
+                return ((IEnumerable<dynamic>) data.resumes).Select<dynamic, CurriculumVitae>(rawResume => Map(rawResume)).ToArray();
             }
+        }
+
+        private static CurriculumVitae Map(dynamic rawResume)
+        {
+            return new CurriculumVitae()
+            {
+                Id = rawResume.id,
+                Birthday = rawResume.birthday,
+                CvHeader = rawResume.header,
+                Education = rawResume.education != null ? rawResume.education.title : string.Empty,
+                Skills = rawResume.skills,
+                FullDataUri = rawResume.url,
+                Name = rawResume.contact != null ? rawResume.contact.name : string.Empty,
+                PersonalQualities = rawResume.personal_qualities,
+                PhotoUri = rawResume.photo != null ? rawResume.photo.url : string.Empty,
+                WorkingType = rawResume.working_type != null ? rawResume.working_type.title : string.Empty,
+                WantedSalary = rawResume.wanted_salary_rub,
+                ExperienceLength = rawResume.experience_length != null ? rawResume.experience_length.title : string.Empty
+            };
         }
     }
 }
