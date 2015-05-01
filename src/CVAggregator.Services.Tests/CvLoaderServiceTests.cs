@@ -15,7 +15,6 @@ namespace CVAggregator.Services.Tests
         [SetUp]
         public void SetUp()
         {
-
             _service = new CvLoaderService("http://rabota.e1.ru/api/v1/resumes/");
         }
 
@@ -25,15 +24,15 @@ namespace CVAggregator.Services.Tests
             var page = await _service.LoadCurriculumVitae(0, PageSize, CityId);
 
             page.Should().NotBeNull();
-            page.Should().HaveCount(PageSize);
+            page.Data.Should().HaveCount(PageSize);
         }
 
         [Test]
         public async void should_parse_resume()
         {
-            var page = await _service.LoadCurriculumVitae(0, PageSize, CityId);
+            var page = (await _service.LoadCurriculumVitae(0, PageSize, CityId)).Data;
 
-            page.Any(p => string.IsNullOrEmpty(p.Id)).Should().BeFalse();
+            page.Any(p => string.IsNullOrEmpty(p.ExternalId)).Should().BeFalse();
             page.Any(p => !string.IsNullOrWhiteSpace(p.Name)).Should().BeTrue();
             page.Any(p => !string.IsNullOrWhiteSpace(p.CvHeader)).Should().BeTrue();
             page.Any(p => !string.IsNullOrWhiteSpace(p.Education)).Should().BeTrue();

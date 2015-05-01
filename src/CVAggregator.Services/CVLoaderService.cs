@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AggregatorService.Domain;
+using Common.Logging;
 using Newtonsoft.Json;
 
 namespace CVAggregator.Services
@@ -11,28 +13,34 @@ namespace CVAggregator.Services
     {
         private readonly string _rootUri;
 
+        private static ILog _log = LogManager.GetLogger<CvLoaderService>();
+
         public CvLoaderService(string rootUri)
         {
             _rootUri = rootUri;
         }
 
-        public async Task<CurriculumVitae[]> LoadCurriculumVitae(int pageIndex, int pageSize, int cityId)
+        public async Task<Page<CurriculumVitae>> LoadCurriculumVitae(int pageIndex, int pageSize, int cityId)
         {
             using (var httpClient = new HttpClient())
             {
                 var rawJson = await httpClient.GetStringAsync(string.Format("{0}?city_id={1}&limit={2}&offset={3}", _rootUri, cityId, pageSize, pageSize*pageIndex));
-
+                _log.Trace(m => m("loaded json {0}", rawJson));
+           
                 var data = JsonConvert.DeserializeObject<dynamic>(rawJson);
 
-                return ((IEnumerable<dynamic>) data.resumes).Select<dynamic, CurriculumVitae>(rawResume => Map(rawResume)).ToArray();
+                var total = Convert.ToInt32(data.metadata.resultset.count);
+                var result = ((IEnumerable<dynamic>) data.resumes).Select<dynamic, CurriculumVitae>(rawResume => Map(rawResume)).ToArray();
+
+                return new Page<CurriculumVitae>(pageIndex, result, total);
             }
         }
 
         private static CurriculumVitae Map(dynamic rawResume)
         {
-            return new CurriculumVitae()
+            return new CurriculumVitae
             {
-                Id = rawResume.id,
+                ExternalId = rawResume.id,
                 Birthday = rawResume.birthday,
                 CvHeader = rawResume.header,
                 Education = rawResume.education != null ? rawResume.education.title : string.Empty,
@@ -46,5 +54,28 @@ namespace CVAggregator.Services
                 ExperienceLength = rawResume.experience_length != null ? rawResume.experience_length.title : string.Empty
             };
         }
+    }
+
+    public class Page<T>
+    {
+        public Page(int index, T[] data, int total)
+        {
+            if (data == null)
+                throw new ArgumentNullException("data");
+            
+            Index = index;
+            Data = data;
+            Total = total;
+        }
+
+        public int Index { get; private set; }
+
+        public int Size
+        {
+            get { return Data.Length; }
+        }
+
+        public int Total { get; private set; }
+        public T[] Data { get; private set; }
     }
 }
