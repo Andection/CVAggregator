@@ -20,7 +20,6 @@
             <Style TargetType="CheckBox">
                 <Setter Property="Margin" Value="5"></Setter>
             </Style>
-            <converters:DateTimeConverter x:Key="DateTimeConverter"/>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
             <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
             <converters:UriImageSourceConverter x:Key="ImageSourceConverter"/>
@@ -100,10 +99,11 @@
 
                        <Image Grid.Row="1" Grid.Column="0" Width="150" Height="200" Source="{Binding PhotoUri, Converter={StaticResource ImageSourceConverter}}" Margin="5"/>
                             <StackPanel Grid.Row="1" Grid.Column="1" Margin="5">
-                                <TextBlock Text="{Binding Name}" FontStyle="Italic"/>
-                                <TextBlock Text="{Binding WantedSalary, StringFormat={}Желаемая зарплата: {0}, TargetNullValue={}Желаемая зарплата: договорная}"/>
-                            <TextBlock Text="{Binding ExperienceLength, StringFormat={}Опыт: {0}, TargetNullValue={}}"/>
-                            <TextBlock Text="{Binding WorkingType, StringFormat={}Занятость: {0}, TargetNullValue={}}"/>
+                            <TextBlock Text="{Binding Name}" FontStyle="Italic"/>
+                            <TextBlock Text="{Binding WantedSalary, StringFormat={}Желаемая зарплата: {0}, TargetNullValue={}Желаемая зарплата: договорная}"/>
+                            <TextBlock Text="{Binding ExperienceLength, StringFormat={}Опыт: {0}, TargetNullValue={}Опыт не указан}"/>
+                            <TextBlock Text="{Binding WorkingType, StringFormat={}Занятость: {0}, TargetNullValue={}Занятость не указана}"/>
+                            <TextBlock Text="{Binding Education, StringFormat={}Образование: {0}, TargetNullValue={}Образование не указано}"/>
                             <TextBlock Text="{Binding Skills}" TextWrapping="WrapWithOverflow"/>
                         </StackPanel>
                     </Grid>
