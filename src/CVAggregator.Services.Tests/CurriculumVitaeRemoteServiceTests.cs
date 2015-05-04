@@ -15,7 +15,7 @@ namespace CVAggregator.Services.Tests
         [SetUp]
         public void SetUp()
         {
-            _service = new CurriculumVitaeRemoteService("http://rabota.e1.ru/api/v1/resumes/");
+            _service = new CurriculumVitaeRemoteService("http://rabota.e1.ru");
         }
 
         [Test]
@@ -34,7 +34,7 @@ namespace CVAggregator.Services.Tests
 
             page.Any(p => string.IsNullOrEmpty(p.ExternalId)).Should().BeFalse();
             page.Any(p => !string.IsNullOrWhiteSpace(p.Name)).Should().BeTrue();
-            page.Any(p => !string.IsNullOrWhiteSpace(p.CvHeader)).Should().BeTrue();
+            page.Any(p => !string.IsNullOrWhiteSpace(p.Header)).Should().BeTrue();
             page.Any(p => !string.IsNullOrWhiteSpace(p.Education)).Should().BeTrue();
             page.Any(p => !string.IsNullOrWhiteSpace(p.ExperienceLength)).Should().BeTrue();
             page.Any(p => !string.IsNullOrWhiteSpace(p.FullDataUri)).Should().BeTrue();
@@ -44,7 +44,6 @@ namespace CVAggregator.Services.Tests
 
             page.Any(p => !string.IsNullOrWhiteSpace(p.Skills)).Should().BeTrue();
             page.Any(p => !string.IsNullOrWhiteSpace(p.WorkingType)).Should().BeTrue();
-            page.Any(p => p.Birthday.HasValue).Should().BeTrue();
             page.Any(p => p.WantedSalary.HasValue).Should().BeTrue();
         }
     }

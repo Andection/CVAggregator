@@ -26,10 +26,9 @@ namespace CVAggregator.Services.Tests
             {
                 ExternalId = "123",
                 ExperienceLength = "ExperienceLength",
-                Birthday = DateTime.UtcNow.Date,
                 Skills = "skillss",
                 WorkingType = "working type",
-                CvHeader = "programmer",
+                Header = "programmer",
                 Education = "education",
                 FullDataUri = "some uri",
                 Name = "name surname",
@@ -47,10 +46,9 @@ namespace CVAggregator.Services.Tests
             var actualCv = GetCollection<CurriculumVitae>().AsQueryable().FirstOrDefault(v => v.ExternalId == expectedCv.ExternalId);
             actualCv.Should().NotBeNull();
             actualCv.ExperienceLength.Should().Be(expectedCv.ExperienceLength);
-            actualCv.Birthday.Should().Be(expectedCv.Birthday);
             actualCv.Skills.Should().Be(expectedCv.Skills);
             actualCv.WorkingType.Should().Be(expectedCv.WorkingType);
-            actualCv.CvHeader.Should().Be(expectedCv.CvHeader);
+            actualCv.Header.Should().Be(expectedCv.Header);
             actualCv.Education.Should().Be(expectedCv.Education);
             actualCv.FullDataUri.Should().Be(expectedCv.FullDataUri);
             actualCv.Name.Should().Be(expectedCv.Name);
@@ -60,11 +58,11 @@ namespace CVAggregator.Services.Tests
         }
 
         [Test]
-        public void should_load_resumes()
+        public async void should_load_resumes()
         {
-            var curriculumVitaes = ExistsResumes(5);
+            ExistsResumes(5);
 
-            var loadedResumes = _service.Load(new QueryCriteria("3"));
+            var loadedResumes = await _service.Load(new QueryCriteria("3"));
 
             loadedResumes.Data.Should().HaveCount(1);
         }
@@ -74,7 +72,7 @@ namespace CVAggregator.Services.Tests
             var result = Enumerable.Range(0, count).Select(i => new CurriculumVitae()
             {
                 Name = "name" + i,
-                CvHeader = "header" + i
+                Header = "header" + i
             }).ToArray();
 
             foreach (var curriculumVitae in result)

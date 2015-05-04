@@ -1,5 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using AggregatorService.Domain;
 using CVAggregator.Services;
@@ -25,11 +27,16 @@ namespace CVAggregator.Host.ViewModel
         private readonly IAggregationService _aggregationService;
         private readonly ICurriculumVitaeService _curriculumVitaeService;
         private RelayCommand _aggregateCommand;
-        private string _nameToken;
         private string _positionToken;
         private ICommand _findCommand;
         private decimal? _maxSalary;
         private string _desiredSkills;
+        private RelayCommand<string> _openResumDetailsCommand;
+        private string _currentProgressMessage;
+        private bool _isBusy;
+        private int _maxProgressValue;
+        private int _currentProgressValue;
+        private bool _isIndeterminable;
 
         public MainViewModel(IAggregationService aggregationService,ICurriculumVitaeService curriculumVitaeService)
         {
@@ -41,8 +48,7 @@ namespace CVAggregator.Host.ViewModel
             {
                 CurriculumVitaes.Add(new CurriculumVitae()
                 {
-                    Birthday = DateTime.Now.AddYears(-25),
-                    CvHeader = "Дворник",
+                    Header = "Дворник",
                     ExperienceLength = "10 лет",
                     WantedSalary = 25000,
                     Name = "Иванов Иван Иванович",
@@ -55,7 +61,7 @@ namespace CVAggregator.Host.ViewModel
                 });
                 CurriculumVitaes.Add(new CurriculumVitae()
                 {
-                    CvHeader = "Программист",
+                    Header = "Программист",
                     ExperienceLength = "10 лет",
                     WantedSalary = 100000,
                     Name = "Петров Петр Петрович",
@@ -68,7 +74,7 @@ namespace CVAggregator.Host.ViewModel
                 });
                 CurriculumVitaes.Add(new CurriculumVitae()
                 {
-                    CvHeader = "Бухгалтер",
+                    Header = "Бухгалтер",
                     ExperienceLength = "10 лет",
                     Name = "Петров Петр Петрович",
                     Skills = "Квартальная отчетность",
@@ -118,31 +124,140 @@ namespace CVAggregator.Host.ViewModel
         {
             get
             {
-                return _findCommand ?? (_findCommand = new RelayCommand(() =>
-                {
-                      var newCvs = _curriculumVitaeService.Load(new QueryCriteria(PositionToken, "", 0, 10000));
-                      CurriculumVitaes.Clear();
-                      foreach (var cv in newCvs.Data)
-                      {
-                          CurriculumVitaes.Add(cv);
-                      }
-                }));
+                return _findCommand ?? (_findCommand = new RelayCommand(OnFindResumes));
             }
+        }
+
+        private async void OnFindResumes()
+        {
+            await BusyIndication(async () =>
+            {
+                var newCvs = await _curriculumVitaeService.Load(new QueryCriteria(PositionToken, "", 0, 10000));
+                CurriculumVitaes.Clear();
+                foreach (var cv in newCvs.Data)
+                {
+                    CurriculumVitaes.Add(cv);
+                }
+            });
         }
 
         public ICommand AggregateCommand
         {
-            get { return _aggregateCommand ?? (_aggregateCommand = new RelayCommand(() => _aggregationService.Aggregate(this))); }
+            get
+            {
+                return _aggregateCommand ?? (_aggregateCommand = new RelayCommand(async () =>
+                {
+                    await OnAggregate();
+                }));
+            }
+        }
+
+        private async Task OnAggregate()
+        {
+            await BusyIndication(async () =>
+            {
+                await _aggregationService.Aggregate(this);
+            });
+        }
+
+        public ICommand OpenResumDetailsCommand
+        {
+            get { return _openResumDetailsCommand ?? (_openResumDetailsCommand = new RelayCommand<string>(url => OnOpenDetails(url))); }
+        }
+
+        private static Process OnOpenDetails(string url)
+        {
+            return Process.Start(url);
+        }
+
+        public string CurrentProgressMessage
+        {
+            get { return _currentProgressMessage; }
+            set
+            {
+                if (value == _currentProgressMessage)
+                    return;
+
+                _currentProgressMessage = value;
+                RaisePropertyChanged(() => CurrentProgressMessage);
+            }
+        }
+
+        private async Task BusyIndication(Func<Task> action)
+        {
+            IsBusy = true;
+            try
+            {
+                await action();
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        public bool IsBusy
+        {
+            get { return _isBusy; }
+            set
+            {
+                _isBusy = value;
+                RaisePropertyChanged(() => IsBusy);
+            }
+        }
+
+        public int MaxProgressValue
+        {
+            get { return _maxProgressValue; }
+            set
+            {
+                if (value == _maxProgressValue)
+                    return;
+
+                _maxProgressValue = value;
+                RaisePropertyChanged(() => MaxProgressValue);
+            }
+        }
+
+        public int CurrentProgressValue
+        {
+            get { return _currentProgressValue; }
+            set
+            {
+                if (value == _currentProgressValue)
+                    return;
+
+                _currentProgressValue = value;
+                RaisePropertyChanged(() => CurrentProgressValue);
+            }
+        }
+
+        public bool IsIndeterminable
+        {
+            get { return _isIndeterminable; }
+            set
+            {
+                if (value == _isIndeterminable) 
+                    return;
+
+                _isIndeterminable = value;
+                RaisePropertyChanged(() => IsIndeterminable);
+            }
         }
 
         public void Indeterminate(string message)
         {
-            throw new System.NotImplementedException();
+            IsIndeterminable = true;
+            CurrentProgressMessage = message;
         }
 
         public void Progress(int current, int max, string message)
         {
-            throw new System.NotImplementedException();
+            IsIndeterminable = false;
+            CurrentProgressMessage = message;
+
+            CurrentProgressValue = current;
+            MaxProgressValue = max;
         }
     }
 }

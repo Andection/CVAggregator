@@ -15,15 +15,17 @@
             <Style TargetType="Button">
                 <Setter Property="Margin" Value="5"></Setter>
             </Style>
-
             <converters:DateTimeConverter x:Key="DateTimeConverter"/>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+            <converters:UriImageSourceConverter x:Key="ImageSourceConverter"/>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="0" IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*" MinWidth="150"/>
@@ -50,7 +52,11 @@
                 <Button Grid.Column="1" Command="{Binding AggregateCommand}" Content="Update resumes" MinWidth="100" HorizontalAlignment="Center"/>
             </Grid>
         </Grid>
-        <ListView Grid.Row="1" ItemsSource="{Binding CurriculumVitaes}" Grid.IsSharedSizeScope="True" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <ListView Grid.Row="1" 
+                  ItemsSource="{Binding CurriculumVitaes}" 
+                  HorizontalContentAlignment="Stretch" 
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                  IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
@@ -72,25 +78,32 @@
                         <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*" SharedSizeGroup="CvHeader"/>
+                                <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="{Binding Path=UpdateDate,Converter={StaticResource DateTimeConverter}}" FontSize="12" VerticalAlignment="Center" Margin="5"/>
-                            <TextBlock Grid.Column="1" Text="{Binding Path=CvHeader}" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Margin="5" HorizontalAlignment="Left"/>
+                            <TextBlock Grid.Column="1" Text="{Binding Path=Header}" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Margin="5" HorizontalAlignment="Left"/>
                         </Grid>
                         
-                        <Image Grid.Row="1" Grid.Column="0" Width="75" Height="75" />
-                        <StackPanel Grid.Row="1" Grid.Column="1">
+                        <Image Grid.Row="1" Grid.Column="0" Width="150" Height="200" Source="{Binding PhotoUri, Converter={StaticResource ImageSourceConverter}}" Margin="5"/>
+                        <StackPanel Grid.Row="1" Grid.Column="1" Margin="5">
                             <TextBlock Text="{Binding Name}" FontStyle="Italic"/>
                             <TextBlock Text="{Binding WantedSalary, StringFormat={}Желаемая зарплата: {0}, TargetNullValue={}}"/>
                             <TextBlock Text="{Binding ExperienceLength, StringFormat={}Опыт: {0}, TargetNullValue={}}"/>
                             <TextBlock Text="{Binding WorkingType, StringFormat={}Занятость: {0}, TargetNullValue={}}"/>
                             <TextBlock Text="{Binding Skills}" TextWrapping="WrapWithOverflow"/>
-                            <Button Content="Посмотреть детальную информацию"></Button>
+                            <Button Content="Посмотреть детальную информацию" Command="{Binding Source={StaticResource Locator}, Path=Main.OpenResumDetailsCommand}" CommandParameter="{Binding FullDataUri}"/>
                         </StackPanel>
                     </Grid>
                     </Border>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+
+        <Border Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" BorderBrush="Black" BorderThickness="1">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="{Binding CurrentProgressMessage}"/>
+                <ProgressBar Width="250" Height="35" Margin="5" IsEnabled="{Binding IsBusy}" IsIndeterminate="{Binding IsIndeterminable}" Maximum="{Binding MaxProgressValue}" Value="{Binding CurrentProgressValue}"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>

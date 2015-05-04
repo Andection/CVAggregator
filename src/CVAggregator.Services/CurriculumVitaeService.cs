@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AggregatorService.Domain;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
@@ -25,23 +26,27 @@ namespace CVAggregator.Services
             _database.DropCollection(typeof (CurriculumVitae).FullName);
         }
 
-        public Page<CurriculumVitae> Load(QueryCriteria criteria = null)
+        //todo: add tokens. splited words
+        public Task<Page<CurriculumVitae>> Load(QueryCriteria criteria = null)
         {
-            var currentCriteria = criteria ?? new QueryCriteria();
-
-            var query = _database.GetCollection<CurriculumVitae>(typeof (CurriculumVitae).FullName).AsQueryable();
-            if (!string.IsNullOrWhiteSpace(currentCriteria.CvHeader))
+            return Task.Run(() =>
             {
-                query = query.Where(c => c.CvHeader.Contains(currentCriteria.CvHeader));
-            }
-            if (!string.IsNullOrWhiteSpace(currentCriteria.Name))
-            {
-                query = query.Where(c => c.Name.Contains(currentCriteria.Name));
-            }
+                var currentCriteria = criteria ?? new QueryCriteria();
 
-            var result = query.OrderBy(c => c.UpdateDate).Take(currentCriteria.PageSize).Skip(currentCriteria.PageIndex*currentCriteria.PageSize).ToArray();
+                var query = _database.GetCollection<CurriculumVitae>(typeof (CurriculumVitae).FullName).AsQueryable();
+                if (!string.IsNullOrWhiteSpace(currentCriteria.CvHeader))
+                {
+                    query = query.Where(c => c.Header.Contains(currentCriteria.CvHeader));
+                }
+                if (!string.IsNullOrWhiteSpace(currentCriteria.Name))
+                {
+                    query = query.Where(c => c.Name.Contains(currentCriteria.Name));
+                }
 
-            return new Page<CurriculumVitae>(currentCriteria.PageIndex, result, 0);
+                var result = query.OrderByDescending(c => c.UpdateDate).Take(currentCriteria.PageSize).Skip(currentCriteria.PageIndex*currentCriteria.PageSize).ToArray();
+
+                return new Page<CurriculumVitae>(currentCriteria.PageIndex, result, 0);
+            });
         }
     }
 

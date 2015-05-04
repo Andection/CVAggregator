@@ -1,7 +1,10 @@
-﻿namespace CVAggregator.Services
+﻿using System.Threading.Tasks;
+using AggregatorService.Domain;
+
+namespace CVAggregator.Services
 {
     public interface ICurriculumVitaeService
     {
-        Page<global::AggregatorService.Domain.CurriculumVitae> Load(QueryCriteria criteria = null);
+        Task<Page<CurriculumVitae>> Load(QueryCriteria criteria = null);
     }
 }

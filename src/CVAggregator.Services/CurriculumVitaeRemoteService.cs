@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using AggregatorService.Domain;
@@ -14,6 +13,7 @@ namespace CVAggregator.Services
         private readonly string _rootUri;
 
         private static readonly ILog Log = LogManager.GetLogger<CurriculumVitaeRemoteService>();
+        private const string DirectoryPath = "/api/v1/resumes/";
 
         public CurriculumVitaeRemoteService(string rootUri)
         {
@@ -24,7 +24,7 @@ namespace CVAggregator.Services
         {
             using (var httpClient = new HttpClient())
             {
-                var rawJson = httpClient.GetStringAsync(string.Format("{0}?city_id={1}&limit={2}&offset={3}", _rootUri, cityId, pageSize, pageSize*pageIndex)).Result;
+                var rawJson = httpClient.GetStringAsync(string.Format("{0}/{1}?city_id={2}&limit={3}&offset={4}", _rootUri, DirectoryPath, cityId, pageSize, pageSize*pageIndex)).Result;
                 Log.Trace(m => m("loaded json {0}", rawJson));
            
                 var data = JsonConvert.DeserializeObject<dynamic>(rawJson);
@@ -36,24 +36,29 @@ namespace CVAggregator.Services
             }
         }
 
-        private static CurriculumVitae Map(dynamic rawResume)
+        private  CurriculumVitae Map(dynamic rawResume)
         {
             return new CurriculumVitae
             {
                 ExternalId = rawResume.id,
-                Birthday = rawResume.birthday,
-                CvHeader = rawResume.header,
+                Header = rawResume.header,
                 Education = rawResume.education != null ? rawResume.education.title : string.Empty,
                 Skills = rawResume.skills,
-                FullDataUri = rawResume.url,
+                FullDataUri = String.Format("{0}{1}", _rootUri, rawResume.url),
                 Name = rawResume.contact != null ? rawResume.contact.name : string.Empty,
                 PersonalQualities = rawResume.personal_qualities,
-                PhotoUri = rawResume.photo != null ? rawResume.photo.url : string.Empty,
+                PhotoUri = rawResume.photo != null && rawResume.photo.url !=null? ConstructUri(rawResume) : string.Empty,
                 WorkingType = rawResume.working_type != null ? rawResume.working_type.title : string.Empty,
                 WantedSalary = rawResume.wanted_salary_rub,
                 ExperienceLength = rawResume.experience_length != null ? rawResume.experience_length.title : string.Empty,
                 UpdateDate = (DateTime?)rawResume.mod_date
             };
+        }
+
+        private dynamic ConstructUri(dynamic rawResume)
+        {
+            var photoUrl = (string) rawResume.photo.url;
+            return photoUrl.ToLower().StartsWith("http") ? photoUrl : string.Format("{0}{1}", _rootUri, photoUrl);
         }
     }
 
