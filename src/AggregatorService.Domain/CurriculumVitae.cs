@@ -10,7 +10,7 @@ namespace AggregatorService.Domain
         public string FullDataUri { get; set; }
         public string Name { get; set; }
         public string PhotoUri { get; set; }
-        public decimal? WantedSalary { get; set; }
+        public int? WantedSalary { get; set; }
         public string Header { get; set; }
         public string PersonalQualities { get; set; }
         public string Skills { get; set; }

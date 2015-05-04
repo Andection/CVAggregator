@@ -44,20 +44,29 @@ namespace CVAggregator.Services
                 Header = rawResume.header,
                 Education = rawResume.education != null ? rawResume.education.title : string.Empty,
                 Skills = rawResume.skills,
-                FullDataUri = String.Format("{0}{1}", _rootUri, rawResume.url),
+                FullDataUri = ConstructUri((string)rawResume.url),
                 Name = rawResume.contact != null ? rawResume.contact.name : string.Empty,
                 PersonalQualities = rawResume.personal_qualities,
-                PhotoUri = rawResume.photo != null && rawResume.photo.url !=null? ConstructUri(rawResume) : string.Empty,
+                PhotoUri = rawResume.photo != null && rawResume.photo.url != null ? ConstructUri((string)rawResume.photo.url) : string.Empty,
                 WorkingType = rawResume.working_type != null ? rawResume.working_type.title : string.Empty,
-                WantedSalary = rawResume.wanted_salary_rub,
+                WantedSalary = ParseSalary(rawResume.wanted_salary_rub),
                 ExperienceLength = rawResume.experience_length != null ? rawResume.experience_length.title : string.Empty,
                 UpdateDate = (DateTime?)rawResume.mod_date
             };
         }
 
-        private dynamic ConstructUri(dynamic rawResume)
+        private int? ParseSalary(dynamic salary)
         {
-            var photoUrl = (string) rawResume.photo.url;
+            if (salary == null)
+                return null;
+
+            var doubleSalary = Convert.ToDouble(salary);
+
+            return (int) doubleSalary;
+        }
+
+        private string ConstructUri(string photoUrl)
+        {
             return photoUrl.ToLower().StartsWith("http") ? photoUrl : string.Format("{0}{1}", _rootUri, photoUrl);
         }
     }

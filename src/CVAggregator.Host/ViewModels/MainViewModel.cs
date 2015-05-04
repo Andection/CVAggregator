@@ -29,7 +29,7 @@ namespace CVAggregator.Host.ViewModel
         private RelayCommand _aggregateCommand;
         private string _positionToken;
         private ICommand _findCommand;
-        private decimal? _maxSalary;
+        private int? _maxSalary;
         private string _desiredSkills;
         private RelayCommand<string> _openResumDetailsCommand;
         private string _currentProgressMessage;
@@ -37,6 +37,8 @@ namespace CVAggregator.Host.ViewModel
         private int _maxProgressValue;
         private int _currentProgressValue;
         private bool _isIndeterminable;
+        private bool _onlyWithPhoto;
+        private bool _onlyWithSalary;
 
         public MainViewModel(IAggregationService aggregationService,ICurriculumVitaeService curriculumVitaeService)
         {
@@ -98,7 +100,7 @@ namespace CVAggregator.Host.ViewModel
             }
         }
 
-        public decimal? MaxSalary
+        public int? MaxSalary
         {
             get { return _maxSalary; }
             set
@@ -118,6 +120,27 @@ namespace CVAggregator.Host.ViewModel
             }
         }
 
+
+        public bool OnlyWithPhoto
+        {
+            get { return _onlyWithPhoto; }
+            set
+            {
+                _onlyWithPhoto = value;
+                RaisePropertyChanged(() => OnlyWithPhoto);
+            }
+        }
+
+        public bool OnlyWithSalary
+        {
+            get { return _onlyWithSalary; }
+            set
+            {
+                _onlyWithSalary = value;
+                RaisePropertyChanged(() => OnlyWithSalary);
+            }
+        }
+
         public ObservableCollection<CurriculumVitae> CurriculumVitaes { get; set; }
 
         public ICommand FindCommad
@@ -132,7 +155,7 @@ namespace CVAggregator.Host.ViewModel
         {
             await BusyIndication(async () =>
             {
-                var newCvs = await _curriculumVitaeService.Load(new QueryCriteria(PositionToken, "", 0, 10000));
+                var newCvs = await _curriculumVitaeService.Load(new QueryCriteria(PositionToken, DesiredSkills, MaxSalary, OnlyWithPhoto, OnlyWithSalary, 0, 10000));
                 CurriculumVitaes.Clear();
                 foreach (var cv in newCvs.Data)
                 {
