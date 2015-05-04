@@ -87,7 +87,7 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="{Binding Path=UpdateDate,Converter={StaticResource DateTimeConverter}}" FontSize="12" VerticalAlignment="Center" Margin="5"/>
+                                <TextBlock Grid.Column="0" Text="{Binding Path=UpdateDate, StringFormat={}yyyy MMMM dd,TargetNullValue={}}" FontSize="12" VerticalAlignment="Center" Margin="5"/>
                             <TextBlock Grid.Column="1"  VerticalAlignment="Center" Margin="5" HorizontalAlignment="Left">
                                 <Hyperlink NavigateUri="{Binding FullDataUri}">
                                     <i:Interaction.Behaviors>
