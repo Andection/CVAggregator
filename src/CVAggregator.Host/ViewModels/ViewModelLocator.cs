@@ -12,7 +12,6 @@
   See http://www.galasoft.ch/mvvm
 */
 
-using System;
 using System.Configuration;
 using System.Linq;
 using CVAggregator.Host.ViewModel;
@@ -22,7 +21,6 @@ using Microsoft.Practices.ServiceLocation;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Driver;
-using AggregatorService = CVAggregator.Services.AggregatorService;
 
 namespace CVAggregator.Host.ViewModels
 {
@@ -39,17 +37,7 @@ namespace CVAggregator.Host.ViewModels
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
-            ////if (ViewModelBase.IsInDesignModeStatic)
-            ////{
-            ////    // Create design time view services and models
-            ////    SimpleIoc.Default.Register<IDataService, DesignDataService>();
-            ////}
-            ////else
-            ////{
-            ////    // Create run time view services and models
-            ////    SimpleIoc.Default.Register<IDataService, DataService>();
-            ////}
-
+            //todo: refactoring
             var client = new MongoClient(ConfigurationManager.ConnectionStrings["mongo"].ConnectionString);
 
             //new api do not compatible with linq a while

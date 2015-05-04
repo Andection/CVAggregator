@@ -1,6 +1,5 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AggregatorService.Domain;
@@ -31,13 +30,12 @@ namespace CVAggregator.Host.ViewModel
         private ICommand _findCommand;
         private int? _maxSalary;
         private string _desiredSkills;
-        private RelayCommand<string> _openResumDetailsCommand;
         private string _currentProgressMessage;
         private bool _isBusy;
         private int _maxProgressValue;
         private int _currentProgressValue;
         private bool _isIndeterminable;
-        private bool _onlyWithPhoto;
+        private bool _onlyWithPhoto=true;
         private bool _onlyWithSalary;
 
         public MainViewModel(IAggregationService aggregationService,ICurriculumVitaeService curriculumVitaeService)
@@ -87,7 +85,10 @@ namespace CVAggregator.Host.ViewModel
                     PhotoUri = "Some photo"
                 });
             }
-
+            else
+            {
+                OnFindResumes();
+            }
         }
 
         public string PositionToken
@@ -128,6 +129,7 @@ namespace CVAggregator.Host.ViewModel
             {
                 _onlyWithPhoto = value;
                 RaisePropertyChanged(() => OnlyWithPhoto);
+                OnFindResumes();
             }
         }
 
@@ -138,6 +140,7 @@ namespace CVAggregator.Host.ViewModel
             {
                 _onlyWithSalary = value;
                 RaisePropertyChanged(() => OnlyWithSalary);
+                OnFindResumes();
             }
         }
 
@@ -181,16 +184,6 @@ namespace CVAggregator.Host.ViewModel
             {
                 await _aggregationService.Aggregate(this);
             });
-        }
-
-        public ICommand OpenResumDetailsCommand
-        {
-            get { return _openResumDetailsCommand ?? (_openResumDetailsCommand = new RelayCommand<string>(url => OnOpenDetails(url))); }
-        }
-
-        private static Process OnOpenDetails(string url)
-        {
-            return Process.Start(url);
         }
 
         public string CurrentProgressMessage

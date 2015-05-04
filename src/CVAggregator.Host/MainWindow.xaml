@@ -52,7 +52,7 @@
                 <CheckBox IsChecked="{Binding OnlyWithSalary, UpdateSourceTrigger=PropertyChanged}" Content="Только с указанной зарплатой"/>
                 <CheckBox IsChecked="{Binding OnlyWithPhoto, UpdateSourceTrigger=PropertyChanged}" Content="Только с фото"/>
             </StackPanel>
-            
+
             <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
                 <Button Command="{Binding FindCommad}" Content="Find" MinWidth="100" HorizontalAlignment="Center"/>
                 <Button Command="{Binding AggregateCommand}" Content="Update resumes" MinWidth="100" HorizontalAlignment="Center"/>
@@ -71,23 +71,23 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Border BorderBrush="Black" BorderThickness="1">
-                    <Grid HorizontalAlignment="Stretch">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
+
+                            <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" Text="{Binding Path=UpdateDate, StringFormat={}yyyy MMMM dd,TargetNullValue={}}" FontSize="12" VerticalAlignment="Center" Margin="5"/>
-                            <TextBlock Grid.Column="1"  VerticalAlignment="Center" Margin="5" HorizontalAlignment="Left">
+                                <TextBlock Grid.Column="1"  VerticalAlignment="Center" Margin="5" HorizontalAlignment="Left">
                                 <Hyperlink NavigateUri="{Binding FullDataUri}">
                                     <i:Interaction.Behaviors>
 	                                	<behaviours:ExternalNavigationBehavior/>
@@ -95,18 +95,21 @@
                                     <TextBlock Text="{Binding Path=Header}" FontSize="18" FontWeight="Bold"></TextBlock>
                                 </Hyperlink>
                             </TextBlock>
-                        </Grid>
+                            </Grid>
 
-                       <Image Grid.Row="1" Grid.Column="0" Width="150" Height="200" Source="{Binding PhotoUri, Converter={StaticResource ImageSourceConverter}}" Margin="5"/>
+                            <Image Grid.Row="1" Grid.Column="0" Width="150" Height="200" Source="{Binding PhotoUri, Converter={StaticResource ImageSourceConverter}}" Margin="5"/>
                             <StackPanel Grid.Row="1" Grid.Column="1" Margin="5">
-                            <TextBlock Text="{Binding Name}" FontStyle="Italic"/>
-                            <TextBlock Text="{Binding WantedSalary, StringFormat={}Желаемая зарплата: {0}, TargetNullValue={}Желаемая зарплата: договорная}"/>
-                            <TextBlock Text="{Binding ExperienceLength, StringFormat={}Опыт: {0}, TargetNullValue={}Опыт не указан}"/>
-                            <TextBlock Text="{Binding WorkingType, StringFormat={}Занятость: {0}, TargetNullValue={}Занятость не указана}"/>
-                            <TextBlock Text="{Binding Education, StringFormat={}Образование: {0}, TargetNullValue={}Образование не указано}"/>
-                            <TextBlock Text="{Binding Skills}" TextWrapping="WrapWithOverflow"/>
-                        </StackPanel>
-                    </Grid>
+                                <TextBlock Text="{Binding Name}" FontStyle="Italic" FontSize="14"/>
+                                <TextBlock Text="{Binding WantedSalary, StringFormat={}Желаемая зарплата: {0}, TargetNullValue={}Желаемая зарплата: договорная}"/>
+                                <TextBlock Text="{Binding ExperienceLength, StringFormat={}Опыт: {0}, TargetNullValue={}Опыт не указан}"/>
+                                <TextBlock Text="{Binding WorkingType, StringFormat={}Занятость: {0}, TargetNullValue={}Занятость не указана}"/>
+                                <TextBlock Text="{Binding Education, StringFormat={}Образование: {0}, TargetNullValue={}Образование не указано}"/>
+                                <TextBlock Text="Навыки" FontStyle="Oblique" Margin="0,20,5,5"/>
+                                <TextBlock Text="{Binding Skills,TargetNullValue={}Не указаны}" TextWrapping="WrapWithOverflow"/>
+                                <TextBlock Text="Личные качества" FontStyle="Oblique" Margin="0,20,5,5"/>
+                                <TextBlock Text="{Binding PersonalQualities,TargetNullValue={}Не указаны}" TextWrapping="WrapWithOverflow"/>
+                            </StackPanel>
+                        </Grid>
                     </Border>
                 </DataTemplate>
             </ListView.ItemTemplate>

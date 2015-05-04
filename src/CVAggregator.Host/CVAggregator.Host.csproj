@@ -82,7 +82,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Behaviours\ExternalNavigationBehavior.cs" />
-    <Compile Include="Converters\DateTimeConverter.cs" />
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Converters\UriImageSourceConverter.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
