@@ -83,6 +83,7 @@
     </ApplicationDefinition>
     <Compile Include="Behaviours\ExternalNavigationBehavior.cs" />
     <Compile Include="Converters\InverseBooleanConverter.cs" />
+    <Compile Include="Converters\NotEmptyStringVisibleConverter.cs" />
     <Compile Include="Converters\UriImageSourceConverter.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />

@@ -59,9 +59,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AggregatorService.cs" />
+    <Compile Include="ResumeAggregatorService.cs" />
     <Compile Include="ResumeRemoteService.cs" />
-    <Compile Include="CurriculumVitaeService.cs" />
+    <Compile Include="ResumeService.cs" />
     <Compile Include="IAggregationService.cs" />
     <Compile Include="ICurriculumVitaeService.cs" />
     <Compile Include="IProgressIndication.cs" />

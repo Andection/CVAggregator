@@ -43,10 +43,10 @@ namespace CVAggregator.Host.ViewModel
             _aggregationService = aggregationService;
             _curriculumVitaeService = curriculumVitaeService;
 
-            CurriculumVitaes = new ObservableCollection<Resume>();
+            Resumes = new ObservableCollection<Resume>();
             if (IsInDesignMode)
             {
-                CurriculumVitaes.Add(new Resume()
+                Resumes.Add(new Resume()
                 {
                     Header = "Дворник",
                     ExperienceLength = "10 лет",
@@ -59,7 +59,7 @@ namespace CVAggregator.Host.ViewModel
                     FullDataUri = "some uri",
                     PhotoUri = "Some photo"
                 });
-                CurriculumVitaes.Add(new Resume()
+                Resumes.Add(new Resume()
                 {
                     Header = "Программист",
                     ExperienceLength = "10 лет",
@@ -72,7 +72,7 @@ namespace CVAggregator.Host.ViewModel
                     FullDataUri = "some uri",
                     PhotoUri = "Some photo"
                 });
-                CurriculumVitaes.Add(new Resume()
+                Resumes.Add(new Resume()
                 {
                     Header = "Бухгалтер",
                     ExperienceLength = "10 лет",
@@ -144,7 +144,7 @@ namespace CVAggregator.Host.ViewModel
             }
         }
 
-        public ObservableCollection<Resume> CurriculumVitaes { get; set; }
+        public ObservableCollection<Resume> Resumes { get; set; }
 
         public ICommand FindCommad
         {
@@ -159,10 +159,10 @@ namespace CVAggregator.Host.ViewModel
             await BusyIndication(async () =>
             {
                 var newCvs = await _curriculumVitaeService.Load(new QueryCriteria(PositionToken, DesiredSkills, MaxSalary, OnlyWithPhoto, OnlyWithSalary, 0, 10000));
-                CurriculumVitaes.Clear();
+                Resumes.Clear();
                 foreach (var cv in newCvs.Data)
                 {
-                    CurriculumVitaes.Add(cv);
+                    Resumes.Add(cv);
                 }
             });
         }

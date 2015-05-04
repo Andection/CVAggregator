@@ -4,7 +4,7 @@
         xmlns:converters="clr-namespace:CVAggregator.Host.Converters"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:behaviours="clr-namespace:CVAggregator.Host.Behaviours"
-        Title="MainWindow" MinHeight="350" MinWidth="525">
+        Title="Резюме с сайта E1.ru" MinHeight="350" MinWidth="525">
     <Grid DataContext="{Binding Main, Source={StaticResource Locator}}">
         <Grid.Resources>
             <Style TargetType="TextBlock">
@@ -23,6 +23,7 @@
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
             <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
             <converters:UriImageSourceConverter x:Key="ImageSourceConverter"/>
+            <converters:NotEmptyStringVisibleConverter x:Key="NotEmptyStringVisibleConverter"/>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -59,7 +60,7 @@
             </StackPanel>
         </Grid>
         <ListView Grid.Row="1" 
-                  ItemsSource="{Binding CurriculumVitaes}" 
+                  ItemsSource="{Binding Resumes}" 
                   HorizontalContentAlignment="Stretch" 
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
                   IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}">
@@ -104,10 +105,10 @@
                                 <TextBlock Text="{Binding ExperienceLength, StringFormat={}Опыт: {0}, TargetNullValue={}Опыт не указан}"/>
                                 <TextBlock Text="{Binding WorkingType, StringFormat={}Занятость: {0}, TargetNullValue={}Занятость не указана}"/>
                                 <TextBlock Text="{Binding Education, StringFormat={}Образование: {0}, TargetNullValue={}Образование не указано}"/>
-                                <TextBlock Text="Навыки" FontStyle="Oblique" Margin="0,20,5,5"/>
-                                <TextBlock Text="{Binding Skills,TargetNullValue={}Не указаны}" TextWrapping="WrapWithOverflow"/>
-                                <TextBlock Text="Личные качества" FontStyle="Oblique" Margin="0,20,5,5"/>
-                                <TextBlock Text="{Binding PersonalQualities,TargetNullValue={}Не указаны}" TextWrapping="WrapWithOverflow"/>
+                                <TextBlock Text="Навыки" FontStyle="Oblique" Margin="0,20,5,5" Visibility="{Binding Skills,Converter={StaticResource NotEmptyStringVisibleConverter}}"/>
+                                <TextBlock Text="{Binding Skills,TargetNullValue={}Не указаны}" TextWrapping="WrapWithOverflow" Visibility="{Binding Skills,Converter={StaticResource NotEmptyStringVisibleConverter}}"/>
+                                <TextBlock Text="Личные качества" FontStyle="Oblique" Margin="0,20,5,5"  Visibility="{Binding PersonalQualities, Converter={StaticResource NotEmptyStringVisibleConverter}}"/>
+                                <TextBlock Text="{Binding PersonalQualities,TargetNullValue={}Не указаны}" TextWrapping="WrapWithOverflow"  Visibility="{Binding PersonalQualities, Converter={StaticResource NotEmptyStringVisibleConverter}}"/>
                             </StackPanel>
                         </Grid>
                     </Border>
