@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using AggregatorService.Domain;
 using FluentAssertions;
@@ -56,6 +57,32 @@ namespace CVAggregator.Services.Tests
             actualCv.PersonalQualities.Should().Be(expectedCv.PersonalQualities);
             actualCv.PhotoUri.Should().Be(expectedCv.PhotoUri);
             actualCv.WantedSalary.Should().Be(expectedCv.WantedSalary);
+        }
+
+        [Test]
+        public void should_load_resumes()
+        {
+            var curriculumVitaes = ExistsResumes(5);
+
+            var loadedResumes = _service.Load(new QueryCriteria("3"));
+
+            loadedResumes.Data.Should().HaveCount(1);
+        }
+
+        private IEnumerable<CurriculumVitae> ExistsResumes(int count = 3)
+        {
+            var result = Enumerable.Range(0, count).Select(i => new CurriculumVitae()
+            {
+                Name = "name" + i,
+                CvHeader = "header" + i
+            }).ToArray();
+
+            foreach (var curriculumVitae in result)
+            {
+                GetCollection<CurriculumVitae>().Save(curriculumVitae);
+            }
+
+            return result;
         }
     }
 }

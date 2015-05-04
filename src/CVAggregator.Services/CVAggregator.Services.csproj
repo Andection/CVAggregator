@@ -63,6 +63,7 @@
     <Compile Include="CurriculumVitaeRemoteService.cs" />
     <Compile Include="CurriculumVitaeService.cs" />
     <Compile Include="IAggregationService.cs" />
+    <Compile Include="ICurriculumVitaeService.cs" />
     <Compile Include="IProgressIndication.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
