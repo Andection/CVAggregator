@@ -60,7 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AggregatorService.cs" />
-    <Compile Include="CurriculumVitaeRemoteService.cs" />
+    <Compile Include="ResumeRemoteService.cs" />
     <Compile Include="CurriculumVitaeService.cs" />
     <Compile Include="IAggregationService.cs" />
     <Compile Include="ICurriculumVitaeService.cs" />

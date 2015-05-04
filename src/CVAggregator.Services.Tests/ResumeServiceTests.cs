@@ -9,20 +9,20 @@ using NUnit.Framework;
 namespace CVAggregator.Services.Tests
 {
     [TestFixture]
-    public class CurriculumVitaeServiceTests : AbstractPersistenceTests
+    public class ResumeServiceTests : AbstractPersistenceTests
     {
-        private CurriculumVitaeService _service;
+        private ResumeService _service;
 
         protected override void BeforeEachTest()
         {
             base.BeforeEachTest();
-            _service = new CurriculumVitaeService(Database);
+            _service = new ResumeService(Database);
         }
 
         [Test]
         public void should_insert_resumes()
         {
-            var expectedCv = new CurriculumVitae()
+            var expectedCv = new Resume()
             {
                 ExternalId = "123",
                 ExperienceLength = "ExperienceLength",
@@ -43,7 +43,7 @@ namespace CVAggregator.Services.Tests
                 expectedCv,
             });
 
-            var actualCv = GetCollection<CurriculumVitae>().AsQueryable().FirstOrDefault(v => v.ExternalId == expectedCv.ExternalId);
+            var actualCv = GetCollection<Resume>().AsQueryable().FirstOrDefault(v => v.ExternalId == expectedCv.ExternalId);
             actualCv.Should().NotBeNull();
             actualCv.ExperienceLength.Should().Be(expectedCv.ExperienceLength);
             actualCv.Skills.Should().Be(expectedCv.Skills);
@@ -67,9 +67,9 @@ namespace CVAggregator.Services.Tests
             loadedResumes.Data.Should().HaveCount(1);
         }
 
-        private IEnumerable<CurriculumVitae> ExistsResumes(int count = 3)
+        private IEnumerable<Resume> ExistsResumes(int count = 3)
         {
-            var result = Enumerable.Range(0, count).Select(i => new CurriculumVitae()
+            var result = Enumerable.Range(0, count).Select(i => new Resume()
             {
                 Name = "name" + i,
                 Header = "header" + i
@@ -77,7 +77,7 @@ namespace CVAggregator.Services.Tests
 
             foreach (var curriculumVitae in result)
             {
-                GetCollection<CurriculumVitae>().Save(curriculumVitae);
+                GetCollection<Resume>().Save(curriculumVitae);
             }
 
             return result;

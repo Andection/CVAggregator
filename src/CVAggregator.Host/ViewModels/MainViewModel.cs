@@ -43,10 +43,10 @@ namespace CVAggregator.Host.ViewModel
             _aggregationService = aggregationService;
             _curriculumVitaeService = curriculumVitaeService;
 
-            CurriculumVitaes = new ObservableCollection<CurriculumVitae>();
+            CurriculumVitaes = new ObservableCollection<Resume>();
             if (IsInDesignMode)
             {
-                CurriculumVitaes.Add(new CurriculumVitae()
+                CurriculumVitaes.Add(new Resume()
                 {
                     Header = "Дворник",
                     ExperienceLength = "10 лет",
@@ -59,7 +59,7 @@ namespace CVAggregator.Host.ViewModel
                     FullDataUri = "some uri",
                     PhotoUri = "Some photo"
                 });
-                CurriculumVitaes.Add(new CurriculumVitae()
+                CurriculumVitaes.Add(new Resume()
                 {
                     Header = "Программист",
                     ExperienceLength = "10 лет",
@@ -72,7 +72,7 @@ namespace CVAggregator.Host.ViewModel
                     FullDataUri = "some uri",
                     PhotoUri = "Some photo"
                 });
-                CurriculumVitaes.Add(new CurriculumVitae()
+                CurriculumVitaes.Add(new Resume()
                 {
                     Header = "Бухгалтер",
                     ExperienceLength = "10 лет",
@@ -144,7 +144,7 @@ namespace CVAggregator.Host.ViewModel
             }
         }
 
-        public ObservableCollection<CurriculumVitae> CurriculumVitaes { get; set; }
+        public ObservableCollection<Resume> CurriculumVitaes { get; set; }
 
         public ICommand FindCommad
         {

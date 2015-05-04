@@ -8,32 +8,32 @@ using MongoDB.Driver.Linq;
 
 namespace CVAggregator.Services
 {
-    public class CurriculumVitaeService : ICurriculumVitaeService
+    public class ResumeService : ICurriculumVitaeService
     {
         private readonly MongoDatabase _database;
 
-        public CurriculumVitaeService(MongoDatabase database)
+        public ResumeService(MongoDatabase database)
         {
             _database = database;
         }
 
-        public void Insert(IEnumerable<CurriculumVitae> resumes)
+        public void Insert(IEnumerable<Resume> resumes)
         {
-            _database.GetCollection<CurriculumVitae>(typeof (CurriculumVitae).FullName).InsertBatch(resumes);
+            _database.GetCollection<Resume>(typeof (Resume).FullName).InsertBatch(resumes);
         }
 
         public void Clear()
         {
-            _database.DropCollection(typeof (CurriculumVitae).FullName);
+            _database.DropCollection(typeof (Resume).FullName);
         }
 
-        public Task<Page<CurriculumVitae>> Load(QueryCriteria criteria = null)
+        public Task<Page<Resume>> Load(QueryCriteria criteria = null)
         {
             return Task.Run(() =>
             {
                 var currentCriteria = criteria ?? new QueryCriteria();
 
-                var query = _database.GetCollection<CurriculumVitae>(typeof (CurriculumVitae).FullName).AsQueryable();
+                var query = _database.GetCollection<Resume>(typeof (Resume).FullName).AsQueryable();
                 if (!string.IsNullOrWhiteSpace(currentCriteria.CvHeader))
                 {
                     query = query.Where(c => c.Header.ToLower().Contains(currentCriteria.CvHeader.ToLower()));
@@ -42,7 +42,9 @@ namespace CVAggregator.Services
                 {
                     var skills = currentCriteria.Skill.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 
+// ReSharper disable LoopCanBeConvertedToQuery
                     foreach (var skill in skills)
+// ReSharper restore LoopCanBeConvertedToQuery
                     {
                         query = query.Where(c => c.Skills.ToLower().Contains(skill.ToLower()));
                     }
@@ -70,7 +72,7 @@ namespace CVAggregator.Services
 
                 var result = query.OrderByDescending(c => c.UpdateDate).Take(currentCriteria.PageSize).Skip(currentCriteria.PageIndex*currentCriteria.PageSize).ToArray();
 
-                return new Page<CurriculumVitae>(currentCriteria.PageIndex, result, 0);
+                return new Page<Resume>(currentCriteria.PageIndex, result, 0);
             });
         }
     }

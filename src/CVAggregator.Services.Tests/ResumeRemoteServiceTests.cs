@@ -5,9 +5,9 @@ using NUnit.Framework;
 namespace CVAggregator.Services.Tests
 {
     [TestFixture]
-    public class CurriculumVitaeRemoteServiceTests
+    public class ResumeRemoteServiceTests
     {
-        private CurriculumVitaeRemoteService _service;
+        private ResumeRemoteService _service;
         private const int PageSize=100;
         //Екатеринбурга
         private const int CityId = 994;
@@ -15,7 +15,7 @@ namespace CVAggregator.Services.Tests
         [SetUp]
         public void SetUp()
         {
-            _service = new CurriculumVitaeRemoteService("http://rabota.e1.ru");
+            _service = new ResumeRemoteService("http://rabota.e1.ru");
         }
 
         [Test]

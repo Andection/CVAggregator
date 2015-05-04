@@ -5,6 +5,6 @@ namespace CVAggregator.Services
 {
     public interface ICurriculumVitaeService
     {
-        Task<Page<CurriculumVitae>> Load(QueryCriteria criteria = null);
+        Task<Page<Resume>> Load(QueryCriteria criteria = null);
     }
 }

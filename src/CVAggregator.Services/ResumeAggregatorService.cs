@@ -6,17 +6,17 @@ using Common.Logging;
 
 namespace CVAggregator.Services
 {
-    public class AggregatorService : IAggregationService
+    public class ResumeAggregatorService : IAggregationService
     {
-        private readonly CurriculumVitaeService _persistenceService;
-        private readonly CurriculumVitaeRemoteService _loaderService;
+        private readonly ResumeService _persistenceService;
+        private readonly ResumeRemoteService _loaderService;
         private const int PageSize = 100;
-        private ILog _log = LogManager.GetLogger<AggregatorService>();
-        //Екатеринбурга
+        private ILog _log = LogManager.GetLogger<ResumeAggregatorService>();
+        //Екатеринбург
         private const int CityId = 994;
         private const string Message = "Идет загрузка данных...";
 
-        public AggregatorService(CurriculumVitaeService persistenceService, CurriculumVitaeRemoteService loaderService)
+        public ResumeAggregatorService(ResumeService persistenceService, ResumeRemoteService loaderService)
         {
             _persistenceService = persistenceService;
             _loaderService = loaderService;

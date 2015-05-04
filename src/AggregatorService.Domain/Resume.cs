@@ -2,8 +2,7 @@
 
 namespace AggregatorService.Domain
 {
-    //todo: rename to resume
-    public class CurriculumVitae
+    public class Resume
     {
         public string Id { get; set; }
         public string ExternalId { get; set; }

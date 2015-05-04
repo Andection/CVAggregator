@@ -54,10 +54,10 @@ namespace CVAggregator.Host.ViewModels
             ConventionRegistry.Register("convention", convention, t => t.Name.Any());
             SimpleIoc.Default.Register<ICurriculumVitaeService>(() => new CurriculumVitaeService(database));
             SimpleIoc.Default.Register(() => new CurriculumVitaeService(database));
-            SimpleIoc.Default.Register(() => new CurriculumVitaeRemoteService(ConfigurationManager.AppSettings["ResumesApiUrl"]));
+            SimpleIoc.Default.Register(() => new ResumeRemoteService(ConfigurationManager.AppSettings["ResumesApiUrl"]));
 
             SimpleIoc.Default.Register<IAggregationService>(
-                () => new Services.AggregatorService(ServiceLocator.Current.GetInstance<CurriculumVitaeService>(), ServiceLocator.Current.GetInstance<CurriculumVitaeRemoteService>()));
+                () => new Services.AggregatorService(ServiceLocator.Current.GetInstance<CurriculumVitaeService>(), ServiceLocator.Current.GetInstance<ResumeRemoteService>()));
 
             SimpleIoc.Default.Register<MainViewModel>();
         }

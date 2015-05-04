@@ -8,12 +8,12 @@ namespace CVAggregator.Services.Tests
     [TestFixture]
     public class AgregatorServiceTests:AbstractPersistenceTests
     {
-        private AggregatorService _service;
+        private ResumeAggregatorService _service;
 
         protected override void BeforeEachTest()
         {
             base.BeforeEachTest();
-            _service = new AggregatorService(new CurriculumVitaeService(Database), new CurriculumVitaeRemoteService("http://rabota.e1.ru/api/v1/resumes/"));
+            _service = new ResumeAggregatorService(new ResumeService(Database), new ResumeRemoteService("http://rabota.e1.ru/api/v1/resumes/"));
         }
 
         [Test]
@@ -21,7 +21,7 @@ namespace CVAggregator.Services.Tests
         {
             await _service.Aggregate(new ProgressIndicationImp());
 
-            var collection = GetCollection<CurriculumVitae>();
+            var collection = GetCollection<Resume>();
             collection.Count().Should().BeGreaterThan(0);
         }
 
