@@ -53,11 +53,12 @@ namespace CVAggregator.Host.ViewModels
             });
             ConventionRegistry.Register("convention", convention, t => t.Name.Any());
             SimpleIoc.Default.Register<ICurriculumVitaeService>(() => new ResumeService(database));
+            SimpleIoc.Default.Register<IUiSynchronizationService>(() => new UiSynchronizationService());
             SimpleIoc.Default.Register(() => new ResumeService(database));
             SimpleIoc.Default.Register(() => new ResumeRemoteService(ConfigurationManager.AppSettings["ResumesApiUrl"]));
 
             SimpleIoc.Default.Register<IAggregationService>(
-                () => new Services.ResumeAggregatorService(ServiceLocator.Current.GetInstance<ResumeService>(), ServiceLocator.Current.GetInstance<ResumeRemoteService>()));
+                () => new ResumeAggregatorService(ServiceLocator.Current.GetInstance<ResumeService>(), ServiceLocator.Current.GetInstance<ResumeRemoteService>()));
 
             SimpleIoc.Default.Register<MainViewModel>();
         }

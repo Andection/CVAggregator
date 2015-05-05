@@ -9,7 +9,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CVAggregator.Services", "CV
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CVAggregator.Services.Tests", "CVAggregator.Services.Tests\CVAggregator.Services.Tests.csproj", "{74C63B6A-5471-4424-95A6-51607B30862C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AggregatorService.Domain", "AggregatorService.Domain\AggregatorService.Domain.csproj", "{7BC707F3-D96A-4B57-B0ED-3AA41A616A85}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CVAggregator.Domain", "AggregatorService.Domain\CVAggregator.Domain.csproj", "{7BC707F3-D96A-4B57-B0ED-3AA41A616A85}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{C0CAF022-E143-4EB1-9D1E-1AB7A3EDEFEE}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

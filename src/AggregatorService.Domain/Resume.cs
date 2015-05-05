@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AggregatorService.Domain
+namespace CVAggregator.Domain
 {
     public class Resume
     {

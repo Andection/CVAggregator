@@ -1,30 +1,20 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using AggregatorService.Domain;
+using CVAggregator.Domain;
 using CVAggregator.Services;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
 namespace CVAggregator.Host.ViewModel
 {
-    /// <summary>
-    /// This class contains properties that the main View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// You can also use Blend to data bind with the tool's support.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm
-    /// </para>
-    /// </summary>
     public class MainViewModel : ViewModelBase, IProgressIndication
     {
         private readonly IAggregationService _aggregationService;
         private readonly ICurriculumVitaeService _curriculumVitaeService;
+        private readonly IUiSynchronizationService _uiSynchronizationService;
         private RelayCommand _aggregateCommand;
         private string _positionToken;
         private ICommand _findCommand;
@@ -38,57 +28,15 @@ namespace CVAggregator.Host.ViewModel
         private bool _onlyWithPhoto=true;
         private bool _onlyWithSalary;
 
-        public MainViewModel(IAggregationService aggregationService,ICurriculumVitaeService curriculumVitaeService)
+        public MainViewModel(IAggregationService aggregationService, ICurriculumVitaeService curriculumVitaeService,IUiSynchronizationService uiSynchronizationService)
         {
             _aggregationService = aggregationService;
             _curriculumVitaeService = curriculumVitaeService;
+            _uiSynchronizationService = uiSynchronizationService;
 
             Resumes = new ObservableCollection<Resume>();
-            if (IsInDesignMode)
-            {
-                Resumes.Add(new Resume()
-                {
-                    Header = "Дворник",
-                    ExperienceLength = "10 лет",
-                    WantedSalary = 25000,
-                    Name = "Иванов Иван Иванович",
-                    Skills = "Метла, лопата, ведро",
-                    WorkingType = "Полный день",
-                    PersonalQualities = "Трудолюбие, находнчивость, трезвость",
-                    Education = "Два и более высших образования",
-                    FullDataUri = "some uri",
-                    PhotoUri = "Some photo"
-                });
-                Resumes.Add(new Resume()
-                {
-                    Header = "Программист",
-                    ExperienceLength = "10 лет",
-                    WantedSalary = 100000,
-                    Name = "Петров Петр Петрович",
-                    Skills = "DDD, TDD, BDD, C#, Unit testing",
-                    WorkingType = "Полный день",
-                    PersonalQualities = "Обучаемость, трудолюбие",
-                    Education = "Начальная школа",
-                    FullDataUri = "some uri",
-                    PhotoUri = "Some photo"
-                });
-                Resumes.Add(new Resume()
-                {
-                    Header = "Бухгалтер",
-                    ExperienceLength = "10 лет",
-                    Name = "Петров Петр Петрович",
-                    Skills = "Квартальная отчетность",
-                    WorkingType = "Полный день",
-                    PersonalQualities = "Обучаемость, трудолюбие",
-                    Education = "Средне-специальное образование",
-                    FullDataUri = "some uri",
-                    PhotoUri = "Some photo"
-                });
-            }
-            else
-            {
-                OnFindResumes();
-            }
+
+            OnFindResumes();
         }
 
         public string PositionToken
@@ -148,17 +96,15 @@ namespace CVAggregator.Host.ViewModel
 
         public ICommand FindCommad
         {
-            get
-            {
-                return _findCommand ?? (_findCommand = new RelayCommand(OnFindResumes));
-            }
+            get { return _findCommand ?? (_findCommand = new RelayCommand(async () => await OnFindResumes().ConfigureAwait(false))); }
         }
 
-        private async void OnFindResumes()
+        private Task OnFindResumes()
         {
-            await BusyIndication(async () =>
+            return BusyIndication(async () =>
             {
-                var newCvs = await _curriculumVitaeService.Load(new QueryCriteria(PositionToken, DesiredSkills, MaxSalary, OnlyWithPhoto, OnlyWithSalary, 0, 10000));
+                //В общем случае лучше не грузить все на клиента, а добавить pagination или динамически заружать только видимые данные
+                var newCvs = await _curriculumVitaeService.Load(new QueryCriteria(PositionToken, DesiredSkills, MaxSalary, OnlyWithPhoto, OnlyWithSalary, 0, 100000));
                 Resumes.Clear();
                 foreach (var cv in newCvs.Data)
                 {
@@ -173,16 +119,17 @@ namespace CVAggregator.Host.ViewModel
             {
                 return _aggregateCommand ?? (_aggregateCommand = new RelayCommand(async () =>
                 {
-                    await OnAggregate();
+                    await OnAggregate().ConfigureAwait(false);
                 }));
             }
         }
 
-        private async Task OnAggregate()
+        private Task OnAggregate()
         {
-            await BusyIndication(async () =>
+            return BusyIndication(async () =>
             {
                 await _aggregationService.Aggregate(this);
+                await OnFindResumes().ConfigureAwait(false);
             });
         }
 
@@ -274,6 +221,11 @@ namespace CVAggregator.Host.ViewModel
 
             CurrentProgressValue = current;
             MaxProgressValue = max;
+        }
+
+        protected override void RaisePropertyChanged(string propertyName = null)
+        {
+            _uiSynchronizationService.Execute(() => base.RaisePropertyChanged(propertyName));
         }
     }
 }

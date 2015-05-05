@@ -22,11 +22,13 @@ namespace CVAggregator.Services
             _loaderService = loaderService;
         }
 
+        //хоть по api видно, что резюме больше 80000, но после 10000 возвращается пустой список резюме. На сайте тоже не отображаются.
         public Task Aggregate(IProgressIndication progressIndication)
         {
             return Task.Run(() =>
             {
                 progressIndication.Indeterminate(Message);
+                //более надежным решением было бы обновление базы, а не пересоздание. Но я думаю, что в рамках этой задачи важнее скорость
                 _persistenceService.Clear();
 
                 var page = _loaderService.LoadCurriculumVitae(0, PageSize, CityId);
@@ -35,7 +37,7 @@ namespace CVAggregator.Services
 
                 progressIndication.Progress(loadedResumes, totalResumes, Message);
                 _persistenceService.Insert(page.Data);
-
+                //при асинхронной реализации сервер начинает возвращать ошибку. похожу на защиту от DDos
                 Enumerable.Range(1, totalResumes/PageSize).AsParallel().ForAll(currentPageIndex =>
                 {
                     try

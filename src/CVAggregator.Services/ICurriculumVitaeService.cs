@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using AggregatorService.Domain;
+using CVAggregator.Domain;
 
 namespace CVAggregator.Services
 {

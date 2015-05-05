@@ -1,5 +1,5 @@
 ﻿using System;
-using AggregatorService.Domain;
+using CVAggregator.Domain;
 using FluentAssertions;
 using NUnit.Framework;
 

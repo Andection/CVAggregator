@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AggregatorService.Domain;
+using CVAggregator.Domain;
 using FluentAssertions;
 using MongoDB.Driver.Linq;
 using NUnit.Framework;

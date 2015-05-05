@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using AggregatorService.Domain;
 using Common.Logging;
+using CVAggregator.Domain;
 using Newtonsoft.Json;
 
 namespace CVAggregator.Services
@@ -26,7 +26,7 @@ namespace CVAggregator.Services
             {
                 var rawJson = httpClient.GetStringAsync(string.Format("{0}/{1}?city_id={2}&limit={3}&offset={4}", _rootUri, DirectoryPath, cityId, pageSize, pageSize*pageIndex)).Result;
                 Log.Trace(m => m("loaded json {0}", rawJson));
-           
+
                 var data = JsonConvert.DeserializeObject<dynamic>(rawJson);
 
                 var total = Convert.ToInt32(data.metadata.resultset.count);

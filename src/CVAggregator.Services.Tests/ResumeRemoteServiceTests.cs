@@ -21,14 +21,14 @@ namespace CVAggregator.Services.Tests
         [Test]
         public  void should_load_page_of_resume()
         {
-            var page =  _service.LoadCurriculumVitae(0, PageSize, CityId);
+            var page = _service.LoadCurriculumVitae(0, PageSize, CityId);
 
             page.Should().NotBeNull();
             page.Data.Should().HaveCount(PageSize);
         }
 
         [Test]
-        public async void should_parse_resume()
+        public void should_parse_resume()
         {
             var page = _service.LoadCurriculumVitae(0, PageSize, CityId).Data;
 
