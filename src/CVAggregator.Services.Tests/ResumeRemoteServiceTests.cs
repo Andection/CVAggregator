@@ -41,7 +41,7 @@ namespace CVAggregator.Services.Tests
             page.Any(p => !string.IsNullOrWhiteSpace(p.Name)).Should().BeTrue();
             page.Any(p => !string.IsNullOrWhiteSpace(p.PersonalQualities)).Should().BeTrue();
             page.Any(p => !string.IsNullOrWhiteSpace(p.PhotoUri)).Should().BeTrue();
-
+            page.Any(p => p.UpdateDate.HasValue).Should().BeTrue();
             page.Any(p => !string.IsNullOrWhiteSpace(p.Skills)).Should().BeTrue();
             page.Any(p => !string.IsNullOrWhiteSpace(p.WorkingType)).Should().BeTrue();
             page.Any(p => p.WantedSalary.HasValue).Should().BeTrue();
