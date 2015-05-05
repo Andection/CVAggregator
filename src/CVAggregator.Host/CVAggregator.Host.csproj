@@ -135,9 +135,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\AggregatorService.Domain\CVAggregator.Domain.csproj">
       <Project>{7BC707F3-D96A-4B57-B0ED-3AA41A616A85}</Project>
