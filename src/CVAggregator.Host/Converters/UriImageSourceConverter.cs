@@ -42,7 +42,6 @@ namespace CVAggregator.Host.Converters
             throw new NotImplementedException();
         }
 
-        //check memory leak
         private static ImageSource GetImageSource(Uri uri)
         {
             var img = new BitmapImage();
