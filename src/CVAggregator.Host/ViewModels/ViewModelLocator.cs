@@ -24,25 +24,30 @@ using MongoDB.Driver;
 
 namespace CVAggregator.Host.ViewModels
 {
-    /// <summary>
-    /// This class contains static references to all the view models in the
-    /// application and provides an entry point for the bindings.
-    /// </summary>
+
     public class ViewModelLocator
     {
-        /// <summary>
-        /// Initializes a new instance of the ViewModelLocator class.
-        /// </summary>
+
         public ViewModelLocator()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
-            //todo: refactoring
-            var client = new MongoClient(ConfigurationManager.ConnectionStrings["mongo"].ConnectionString);
+            SimpleIoc.Default.Register<MongoDatabase>(GetDatabase);
 
-            //new api do not compatible with linq a while
-            var server = client.GetServer();
-            var database = server.GetDatabase(ConfigurationManager.AppSettings["DatabaseName"]);
+            SimpleIoc.Default.Register<ICurriculumVitaeService>(() => new ResumeService(ServiceLocator.Current.GetInstance<MongoDatabase>()));
+            SimpleIoc.Default.Register<IUiSynchronizationService>(() => new UiSynchronizationService());
+            SimpleIoc.Default.Register(() => new ResumeService(ServiceLocator.Current.GetInstance<MongoDatabase>()));
+            SimpleIoc.Default.Register(() => new ResumeRemoteService(ConfigurationManager.AppSettings["ResumesApiUrl"]));
+
+            SimpleIoc.Default.Register<IAggregationService>(
+                () => new ResumeAggregatorService(ServiceLocator.Current.GetInstance<ResumeService>(), ServiceLocator.Current.GetInstance<ResumeRemoteService>()));
+
+            SimpleIoc.Default.Register<MainViewModel>();
+        }
+
+        private MongoDatabase GetDatabase()
+        {
+            var client = new MongoClient(ConfigurationManager.ConnectionStrings["mongo"].ConnectionString);
             var convention = new ConventionPack();
             convention.AddClassMapConvention("IdConvention", c =>
             {
@@ -52,15 +57,10 @@ namespace CVAggregator.Host.ViewModels
                 }
             });
             ConventionRegistry.Register("convention", convention, t => t.Name.Any());
-            SimpleIoc.Default.Register<ICurriculumVitaeService>(() => new ResumeService(database));
-            SimpleIoc.Default.Register<IUiSynchronizationService>(() => new UiSynchronizationService());
-            SimpleIoc.Default.Register(() => new ResumeService(database));
-            SimpleIoc.Default.Register(() => new ResumeRemoteService(ConfigurationManager.AppSettings["ResumesApiUrl"]));
 
-            SimpleIoc.Default.Register<IAggregationService>(
-                () => new ResumeAggregatorService(ServiceLocator.Current.GetInstance<ResumeService>(), ServiceLocator.Current.GetInstance<ResumeRemoteService>()));
-
-            SimpleIoc.Default.Register<MainViewModel>();
+            //new api do not compatible with linq a while
+            var server = client.GetServer();
+            return server.GetDatabase(ConfigurationManager.AppSettings["DatabaseName"]);
         }
 
         public MainViewModel Main
